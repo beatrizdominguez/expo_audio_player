@@ -1,22 +1,33 @@
 import React from 'react'
-import { Text, SafeAreaView } from 'react-native'
+import { Text, SafeAreaView, Button, View } from 'react-native'
 
-// import { appName } from './../../../constants/appConfig.json'
+import { audios } from './../../../constants/appConfig.json'
 // import PageStyles from './styles'
+import Colors from '../../../constants/Colors'
+import PageStyles from './styles'
 
-// import { PageLayout, Spacing } from '../../components'
+import { PageLayout, CustomBUtton } from './../../components'
 
-// const IMAGENAME = require('./../../res/icon.png')
+const HomeScreen = ({ navigation }) => {
 
-const HomeScreen = (props) => {
+    const goToScreen = (url) => {
+        navigation.navigate('Detail', { url })
+    }
+
     return (
-        <>
-            {/* <CustomStatusBar hidden={fullScreen} /> */}
-            {/* <SafeAreaView style={{ ...GlobalStyles.container, ...styles }}> */}
-            <SafeAreaView >
-                <Text >Home screen</Text>
-            </SafeAreaView>
-        </>
+        <PageLayout>
+            {audios.map((elem, i) => (
+                <CustomBUtton
+                    key={i}
+                    styles={PageStyles.bigButton}
+                    onPress={() => goToScreen(elem.url)}
+                    title={elem.name}
+                    color={Colors.contrast_colors[i]}
+                    accessibilityLabel="Learn more about this purple button"
+                />
+            ))}
+
+        </PageLayout>
     )
 }
 

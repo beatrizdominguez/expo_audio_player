@@ -1,22 +1,19 @@
 import React from 'react'
 import { Text, SafeAreaView } from 'react-native'
 
-// import { appName } from './../../../constants/appConfig.json'
 // import PageStyles from './styles'
 
-// import { PageLayout, Spacing } from '../../components'
+import { PageLayout } from './../../components'
 
-// const IMAGENAME = require('./../../res/icon.png')
 
-const DetailScreen = (props) => {
+const DetailScreen = ({ navigation, route }) => {
+    const { params } = route
+    console.log({ params })
+
     return (
-        <>
-            {/* <CustomStatusBar hidden={fullScreen} /> */}
-            {/* <SafeAreaView style={{ ...GlobalStyles.container, ...styles }}> */}
-            <SafeAreaView >
-                <Text >Audio player</Text>
-            </SafeAreaView>
-        </>
+        <PageLayout>
+            <Text >{params.url}</Text>
+        </PageLayout>
     )
 }
 

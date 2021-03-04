@@ -1,0 +1,17 @@
+{
+    "appName": "Audio player",
+    "audios": [
+        {
+            "name": "Algo",
+            "url": "algo.mp3"
+        },
+        {
+            "name": "Otro",
+            "url": "otro.mp3"
+        },
+        {
+            "name": "Otro más",
+            "url": "otro.mp3"
+        }
+    ]
+}
