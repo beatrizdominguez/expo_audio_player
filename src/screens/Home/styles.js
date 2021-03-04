@@ -1,9 +1,9 @@
 import { StyleSheet } from 'react-native'
 
 import Layout from './../../../constants/Layout'
-import {audios} from './../../../constants/appConfig.json'
+import {audioBookPlaylist} from './../../../constants/appConfig.json'
 
-const height = Layout.window.height / audios.length
+const height = Layout.window.height / audioBookPlaylist.length
 
 const styles = StyleSheet.create({
     bigButton: {
