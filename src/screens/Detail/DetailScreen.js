@@ -94,22 +94,23 @@ const DetailScreen = ({ navigation, route }) => {
 
     return (
         <PageLayout>
-            <TouchableOpacity onPress={handlePlayPause}>
-                <Image
-                    style={PageStyles.albumCover}
-                    source={{ uri: 'http://www.archive.org/download/LibrivoxCdCoverArt8/hamlet_1104.jpg' }}
-                />
-            </TouchableOpacity>
-            <View style={PageStyles.controls}>
-                <TouchableOpacity style={PageStyles.control} onPress={handlePlayPause}>
-                    {isPlaying ? (
-                        <Ionicons name='ios-pause' size={48} color='#444' />
-                    ) : (
-                            <Ionicons name='ios-play-circle' size={48} color='#444' />
-                        )}
+            <View style={PageStyles.imgContent}>
+                <TouchableOpacity onPress={handlePlayPause}>
+                    <Image
+                        style={PageStyles.albumCover}
+                        source={{ uri: 'http://www.archive.org/download/LibrivoxCdCoverArt8/hamlet_1104.jpg' }}
+                    />
                 </TouchableOpacity>
+                <View style={PageStyles.controls}>
+                    <TouchableOpacity style={PageStyles.control} onPress={handlePlayPause}>
+                        {isPlaying ? (
+                            <Ionicons name='ios-pause' size={48} color='#444' />
+                        ) : (
+                                <Ionicons name='ios-play-circle' size={48} color='#444' />
+                            )}
+                    </TouchableOpacity>
+                </View>
             </View>
-            {/* {this.renderFileInfo()} */}
             {renderFileInfo()}
         </PageLayout >
     )

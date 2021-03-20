@@ -7,9 +7,14 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'center'
     },
+    imgContent: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center"
+    },
     albumCover: {
-      width: 250,
-      height: 250
+      width: 300,
+      height: 300
     },
     trackInfo: {
       padding: 40,
