@@ -24,8 +24,7 @@ const DetailScreen = ({ navigation, route }) => {
 
 
     useEffect(() => {
-        const dbData = getDataById(audioBook.title_id)
-        console.log({ dbData })
+        getDataById(audioBook.title_id, setPositionMillis)
         initPlayer()
         return exitScreen
     }, [])
@@ -43,7 +42,7 @@ const DetailScreen = ({ navigation, route }) => {
 
             return () => clearInterval(interval);
 
-        } else {
+        } else if(!isPlaying && !loading) {
             console.log(`esta pauado, guardo en bd para probar`)
             update(audioBook.title_id, positionMillis)
         }
@@ -71,7 +70,6 @@ const DetailScreen = ({ navigation, route }) => {
             console.log(e)
         }
     }
-
 
     const initPlayer = async () => {
         await Audio.setAudioModeAsync({
