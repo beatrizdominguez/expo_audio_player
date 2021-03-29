@@ -10,7 +10,6 @@ import PageStyles from './styles'
 
 import { PageLayout } from './../../components'
 
-
 const DetailScreen = ({ navigation, route }) => {
     const { params } = route
     const { audioBook } = params
@@ -22,37 +21,10 @@ const DetailScreen = ({ navigation, route }) => {
     const [durationMillis, setDurationMillis] = useState(0)
     const [progress, setProgress] = useState(0)
 
-    let interval
 
     useEffect(() => {
         const dbData = getDataById(audioBook.title_id)
-        if(dbData) {
-            const { time } = dbData
-            console.log(`sacamos la info y hacemos las cosas aqui`)
-            setPositionMillis(time)
-            console.log({ time })
-
-        }
-
-        try {
-
-            (async () => {
-                async(
-                    await Audio.setAudioModeAsync({
-                        allowsRecordingIOS: false,
-                        interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
-                        playsInSilentModeIOS: true,
-                        interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DUCK_OTHERS,
-                        shouldDuckAndroid: true,
-                        staysActiveInBackground: true,
-                        playThroughEarpieceAndroid: true
-                    })
-                )
-            })()
-            loadAudio()
-        } catch (error) {
-            console.error('UPS: ' + error)
-        }
+        initPlayer()
         return exitScreen
     }, [])
 
@@ -65,12 +37,11 @@ const DetailScreen = ({ navigation, route }) => {
                 setPositionMillis(newPositionMillis)
                 const progressValue = durationMillis ? newPositionMillis / durationMillis : 0
                 setProgress(progressValue)
-                // computeDuration(durationMillis)
             }, 1000);
 
             return () => clearInterval(interval);
 
-        }else {
+        } else {
             console.log(`esta pauado, guardo en bd para probar`)
             update(audioBook.title_id, positionMillis)
         }
@@ -94,6 +65,20 @@ const DetailScreen = ({ navigation, route }) => {
         } catch (e) {
             console.log(e)
         }
+    }
+
+
+    const initPlayer = async () => {
+        await Audio.setAudioModeAsync({
+            allowsRecordingIOS: false,
+            interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
+            playsInSilentModeIOS: true,
+            interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DUCK_OTHERS,
+            shouldDuckAndroid: true,
+            staysActiveInBackground: true,
+            playThroughEarpieceAndroid: true
+        })
+        loadAudio()
     }
 
 
