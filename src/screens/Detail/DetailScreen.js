@@ -21,13 +21,24 @@ const DetailScreen = ({ navigation, route }) => {
     const [positionMillis, setPositionMillis] = useState(0)
     const [durationMillis, setDurationMillis] = useState(0)
     const [progress, setProgress] = useState(0)
+    const [isDataLoaded, setIsDataLoaded] = useState(false)
+
 
 
     useEffect(() => {
-        getDataById(audioBook.title_id, setPositionMillis)
+        getDataById(audioBook.title_id, (ms) => {
+            setPositionMillis(ms)
+            setIsDataLoaded(true)
+        })
         initPlayer()
         return exitScreen
     }, [])
+    
+    useEffect(() => {
+        if(isDataLoaded && playbackInstance){
+            playbackInstance.setPositionAsync(positionMillis)
+        }
+    }, [isDataLoaded, playbackInstance, positionMillis])
 
     // https://upmostly.com/tutorials/setinterval-in-react-components-using-hooks
     useEffect(() => {
@@ -42,8 +53,7 @@ const DetailScreen = ({ navigation, route }) => {
 
             return () => clearInterval(interval);
 
-        } else if(!isPlaying && !loading) {
-            console.log(`esta pauado, guardo en bd para probar`)
+        } else if (!isPlaying && !loading) {
             update(audioBook.title_id, positionMillis)
         }
     }, [isPlaying, positionMillis, durationMillis])
@@ -140,7 +150,7 @@ const DetailScreen = ({ navigation, route }) => {
         <PageLayout>
             <View style={PageStyles.imgContent}>
                 {loading ? (
-                    <ProgressBarAndroid styleAttr='Large'  />
+                    <ProgressBarAndroid styleAttr='Large' />
                 ) : (
                         <TouchableOpacity onPress={handlePlayPause}>
                             <Image
