@@ -1,10 +1,13 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Text, SafeAreaView, Button, View } from 'react-native'
 
 import { audioBookPlaylist } from './../../../constants/appConfig.json'
 // import PageStyles from './styles'
 import Colors from '../../../constants/Colors'
 import PageStyles from './styles'
+
+import { initDatabase } from './../../database'
+
 
 import { PageLayout, CustomBUtton } from './../../components'
 
@@ -13,6 +16,10 @@ const HomeScreen = ({ navigation }) => {
     const goToScreen = (audioBook) => {
         navigation.navigate('Detail', { audioBook })
     }
+
+    useEffect(() => {
+        initDatabase()
+    }, [])
 
     return (
         <PageLayout>

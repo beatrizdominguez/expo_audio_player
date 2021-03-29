@@ -2,12 +2,12 @@ import * as SQLite from 'expo-sqlite';
 
 
 const databaseName = 'tattoos_migration'
-const tableName = 'settings'
+const tableName = 'settings_2'
 const db = SQLite.openDatabase(`db.${databaseName}`);
 
 const initDatabase = () => {
   return db.transaction(tx => {
-    const createTableQuery = `create table if not exists ${tableName} (id integer primary key autoincrement, time integer);`
+    const createTableQuery = `create table if not exists ${tableName} (id integer primary key autoincrement, title_id string, time integer);`
     const createTableOptions =[]
     tx.executeSql(
       createTableQuery,
@@ -21,10 +21,10 @@ const initDatabase = () => {
 }
 
 
-const getData = (id) => {
+const getData = (title_id) => {
   console.log('GetData from database')
   return db.transaction(tx => {
-    const selectQuery = `select * from ${tableName} where id = ${id}`
+    const selectQuery = `select * from ${tableName} where title_id = '${title_id}'`
     const selectOptions = []
 
     tx.executeSql(
@@ -52,7 +52,7 @@ const getData = (id) => {
   ()=> console.log('transaction success') )
 }
 
-const update = ( id, time) => {
+const update = ( title_id, time) => {
   console.log('update database')
   if (!selectedValues) selectedValues ={...initialConfig}
 

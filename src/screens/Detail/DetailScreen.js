@@ -3,6 +3,8 @@ import { Text, View, Image, TouchableOpacity, RefreshControlBase } from 'react-n
 import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av'
 
+import { getData } from './../../database'
+
 import PageStyles from './styles'
 
 import { PageLayout } from './../../components'
@@ -17,8 +19,9 @@ const DetailScreen = ({ navigation, route }) => {
     const [isBuffering, setIsBuffering] = useState(false)
 
 
-
     useEffect(() => {
+
+        const dbData = getData(audioBook.title_id)
         try {
 
             (async () => {
