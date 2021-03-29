@@ -37,8 +37,12 @@ const DetailScreen = ({ navigation, route }) => {
     useEffect(() => {
         if(isDataLoaded && playbackInstance){
             playbackInstance.setPositionAsync(positionMillis)
+            if(positionMillis && durationMillis) {
+                const progressValue = durationMillis ? positionMillis / durationMillis : 0
+                setProgress(progressValue)
+            }
         }
-    }, [isDataLoaded, playbackInstance, positionMillis])
+    }, [isDataLoaded, playbackInstance, positionMillis, durationMillis])
 
     // https://upmostly.com/tutorials/setinterval-in-react-components-using-hooks
     useEffect(() => {
