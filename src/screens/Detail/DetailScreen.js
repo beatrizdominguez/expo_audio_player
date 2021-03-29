@@ -20,7 +20,6 @@ const DetailScreen = ({ navigation, route }) => {
     const [isBuffering, setIsBuffering] = useState(false)
     const [positionMillis, setPositionMillis] = useState(0)
     const [durationMillis, setDurationMillis] = useState(0)
-    const [duration, setDuration] = useState('')
     const [progress, setProgress] = useState(0)
 
     let interval
@@ -114,16 +113,11 @@ const DetailScreen = ({ navigation, route }) => {
     //     await playbackInstance.setVolumeAsync(volume + 1)
     // }
 
-    // const computeDuration = (ms) => {
-    //     setDuration(millisecondsToText(mx))
-    // }
-
     const renderProgress = () => {
         return (
             <View>
                 <ProgressBarAndroid styleAttr="Horizontal" indeterminate={false} progress={progress} />
-                <Text>duration: {duration}</Text>
-                <Text>progress: {progress}</Text>
+                <Text style={[PageStyles.progressText]}>{millisecondsToText(positionMillis || 0)} / {millisecondsToText(durationMillis || 0)}</Text>
             </View>
         )
     }
