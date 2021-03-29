@@ -33,11 +33,11 @@ const DetailScreen = ({ navigation, route }) => {
         initPlayer()
         return exitScreen
     }, [])
-    
+
     useEffect(() => {
-        if(isDataLoaded && playbackInstance){
+        if (isDataLoaded && playbackInstance) {
             playbackInstance.setPositionAsync(positionMillis)
-            if(positionMillis && durationMillis) {
+            if (positionMillis && durationMillis) {
                 const progressValue = durationMillis ? positionMillis / durationMillis : 0
                 setProgress(progressValue)
             }
@@ -156,23 +156,25 @@ const DetailScreen = ({ navigation, route }) => {
                 {loading ? (
                     <ProgressBarAndroid styleAttr='Large' />
                 ) : (
-                        <TouchableOpacity onPress={handlePlayPause}>
-                            <Image
-                                style={PageStyles.albumCover}
-                                source={{ uri: 'http://www.archive.org/download/LibrivoxCdCoverArt8/hamlet_1104.jpg' }}
-                            />
-                        </TouchableOpacity>
+                        <>
+                            <TouchableOpacity onPress={handlePlayPause}>
+                                <Image
+                                    style={PageStyles.albumCover}
+                                    source={{ uri: 'http://www.archive.org/download/LibrivoxCdCoverArt8/hamlet_1104.jpg' }}
+                                />
+                            </TouchableOpacity>
+                            <View style={PageStyles.controls}>
+                                <TouchableOpacity style={PageStyles.control} onPress={handlePlayPause}>
+                                    {isPlaying ? (
+                                        <Ionicons name='ios-pause' size={48} color='#444' />
+                                    ) : (
+                                            <Ionicons name='ios-play-circle' size={48} color='#444' />
+                                        )}
+                                </TouchableOpacity>
+                            </View>
+                        </>
                     )
                 }
-                <View style={PageStyles.controls}>
-                    <TouchableOpacity style={PageStyles.control} onPress={handlePlayPause}>
-                        {isPlaying ? (
-                            <Ionicons name='ios-pause' size={48} color='#444' />
-                        ) : (
-                                <Ionicons name='ios-play-circle' size={48} color='#444' />
-                            )}
-                    </TouchableOpacity>
-                </View>
             </View>
             {renderFileInfo()}
         </PageLayout >
