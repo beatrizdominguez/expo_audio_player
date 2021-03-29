@@ -13,6 +13,7 @@ import { PageLayout } from './../../components'
 const DetailScreen = ({ navigation, route }) => {
     const { params } = route
     const { audioBook } = params
+    const [loading, setLoading] = useState(true)
     const [isPlaying, setIsPlaying] = useState(false)
     const [playbackInstance, setPlaybackInstance] = useState(null)
     const [volume, setVolume] = useState(1.0)
@@ -24,6 +25,7 @@ const DetailScreen = ({ navigation, route }) => {
 
     useEffect(() => {
         const dbData = getDataById(audioBook.title_id)
+        console.log({ dbData })
         initPlayer()
         return exitScreen
     }, [])
@@ -60,7 +62,10 @@ const DetailScreen = ({ navigation, route }) => {
             }
 
             playbackInstance.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate)
-            await playbackInstance.loadAsync(source, status, false)
+            const result = await playbackInstance.loadAsync(source, status, false)
+            const { durationMillis } = result
+            setDurationMillis(durationMillis)
+            setLoading(false)
             setPlaybackInstance(playbackInstance)
         } catch (e) {
             console.log(e)
@@ -98,8 +103,7 @@ const DetailScreen = ({ navigation, route }) => {
     const handlePlayPause = async (params) => {
         setIsPlaying(!isPlaying)
         const result = isPlaying ? await playbackInstance.pauseAsync() : await playbackInstance.playAsync()
-        const { positionMillis, durationMillis } = result
-        setDurationMillis(durationMillis)
+        const { positionMillis } = result
         setPositionMillis(positionMillis)
         // playFromPositionAsync(0)
     }
@@ -137,12 +141,17 @@ const DetailScreen = ({ navigation, route }) => {
     return (
         <PageLayout>
             <View style={PageStyles.imgContent}>
-                <TouchableOpacity onPress={handlePlayPause}>
-                    <Image
-                        style={PageStyles.albumCover}
-                        source={{ uri: 'http://www.archive.org/download/LibrivoxCdCoverArt8/hamlet_1104.jpg' }}
-                    />
-                </TouchableOpacity>
+                {loading ? (
+                    <ProgressBarAndroid styleAttr='Large'  />
+                ) : (
+                        <TouchableOpacity onPress={handlePlayPause}>
+                            <Image
+                                style={PageStyles.albumCover}
+                                source={{ uri: 'http://www.archive.org/download/LibrivoxCdCoverArt8/hamlet_1104.jpg' }}
+                            />
+                        </TouchableOpacity>
+                    )
+                }
                 <View style={PageStyles.controls}>
                     <TouchableOpacity style={PageStyles.control} onPress={handlePlayPause}>
                         {isPlaying ? (
