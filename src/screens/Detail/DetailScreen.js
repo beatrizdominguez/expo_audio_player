@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { Text, View, Image, TouchableOpacity, RefreshControlBase } from 'react-native'
+import { Text, View, Image, TouchableOpacity, ProgressBarAndroid } from 'react-native'
 import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av'
 
 import { getData } from './../../database'
+import { millisecondsToText } from './../../tools'
 
 import PageStyles from './styles'
 
@@ -17,11 +18,16 @@ const DetailScreen = ({ navigation, route }) => {
     const [playbackInstance, setPlaybackInstance] = useState(null)
     const [volume, setVolume] = useState(1.0)
     const [isBuffering, setIsBuffering] = useState(false)
+    const [positionMillis, setPositionMillis] = useState(0)
+    const [durationMillis, setDurationMillis] = useState(0)
+    const [duration, setDuration] = useState('')
+    const [progress, setProgress] = useState(0)
 
+    let interval
 
     useEffect(() => {
-
         const dbData = getData(audioBook.title_id)
+
         try {
 
             (async () => {
@@ -41,8 +47,25 @@ const DetailScreen = ({ navigation, route }) => {
         } catch (error) {
             console.error('UPS: ' + error)
         }
+        return exitScreen
     }, [])
 
+    // https://upmostly.com/tutorials/setinterval-in-react-components-using-hooks
+    useEffect(() => {
+        let interval
+        if (isPlaying) {
+            interval = setInterval(() => {
+                const newPositionMillis = positionMillis + 1000
+                setPositionMillis(newPositionMillis)
+                const progressValue = durationMillis ? newPositionMillis / durationMillis : 0
+                setProgress(progressValue)
+                // computeDuration(durationMillis)
+            }, 1000);
+
+            return () => clearInterval(interval);
+
+        }
+    }, [isPlaying, positionMillis, durationMillis])
 
     const loadAudio = async () => {
         try {
@@ -69,9 +92,21 @@ const DetailScreen = ({ navigation, route }) => {
         setIsBuffering(status.isBuffering)
     }
 
+    const exitScreen = () => {
+        console.log(`::::::`)
+        console.log('BYE BYE!!!!')
+        console.log(`::::::`)
+        // pause if needed
+        // save current state in database
+    }
+
     const handlePlayPause = async (params) => {
-        isPlaying ? await playbackInstance.pauseAsync() : await playbackInstance.playAsync()
         setIsPlaying(!isPlaying)
+        const result = isPlaying ? await playbackInstance.pauseAsync() : await playbackInstance.playAsync()
+        const { positionMillis, durationMillis } = result
+        setDurationMillis(durationMillis)
+        setPositionMillis(positionMillis)
+        // playFromPositionAsync(0)
     }
 
     // const onVolumeUp = async params => {
@@ -79,12 +114,26 @@ const DetailScreen = ({ navigation, route }) => {
     //     await playbackInstance.setVolumeAsync(volume + 1)
     // }
 
+    // const computeDuration = (ms) => {
+    //     setDuration(millisecondsToText(mx))
+    // }
+
+    const renderProgress = () => {
+        return (
+            <View>
+                <ProgressBarAndroid styleAttr="Horizontal" indeterminate={false} progress={progress} />
+                <Text>duration: {duration}</Text>
+                <Text>progress: {progress}</Text>
+            </View>
+        )
+    }
     const renderFileInfo = () => {
         return (
             <View style={PageStyles.trackInfo}>
                 <Text style={[PageStyles.trackInfoText, PageStyles.largeText]}>
                     {audioBook.title}
                 </Text>
+                {renderProgress()}
                 <Text style={[PageStyles.trackInfoText, PageStyles.smallText]}>
                     {audioBook.author}
                 </Text>
