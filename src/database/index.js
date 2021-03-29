@@ -1,13 +1,13 @@
 import * as SQLite from 'expo-sqlite';
 
 
-const databaseName = 'tattoos_migration'
-const tableName = 'settings_2'
+const databaseName = 'audio_player'
+const tableName = 'settings_3'
 const db = SQLite.openDatabase(`db.${databaseName}`);
 
 const initDatabase = () => {
   return db.transaction(tx => {
-    const createTableQuery = `create table if not exists ${tableName} (id integer primary key autoincrement, title_id string, time integer);`
+    const createTableQuery = `create table if not exists ${tableName} (id integer primary key autoincrement, title_id string not null unique, time integer);`
     const createTableOptions =[]
     tx.executeSql(
       createTableQuery,
@@ -21,7 +21,7 @@ const initDatabase = () => {
 }
 
 
-const getData = (title_id) => {
+const getDataById = (title_id) => {
   console.log('GetData from database')
   return db.transaction(tx => {
     const selectQuery = `select * from ${tableName} where title_id = '${title_id}'`
@@ -35,12 +35,6 @@ const getData = (title_id) => {
         // if (!rowsCount) setOptions(initialConfig)
         
         const data = results.rows.item(0)
-        console.log('----------------------------')
-        console.log('----------------------------')
-        console.log({ data })
-        console.log('----------------------------')
-        console.log('----------------------------')
-        // setOptions(parseObject(data))
       },
       (tx, error) => {
         // setOptions(initialConfig)
@@ -52,56 +46,18 @@ const getData = (title_id) => {
   ()=> console.log('transaction success') )
 }
 
-const update = ( title_id, time) => {
+const update = ( title_id, time = 0) => {
   console.log('update database')
-  if (!selectedValues) selectedValues ={...initialConfig}
+  console.log('----------------------------')
+  console.log({ title_id })
+  console.log({ time })
+  // return
+  if (!title_id) return
 
   return db.transaction(tx => {
-    const len = Object.keys(selectedValues).length
+    const insertValues = [title_id, time]
 
-    let columns = ''
-    for (let i = 0; i < len; i++) {
-      const lastOption = i === len-1
-      const val = Object.keys(selectedValues)[i]
-      columns += !lastOption ? `${val} text, ` : `${val} text`
-    }
-    // init table
-    const createTableQuery = `create table if not exists ${tableName} (id integer primary key autoincrement, ${columns});`
-    const createTableOptions =[]
-    tx.executeSql(
-      createTableQuery,
-      createTableOptions,
-      (tx, results) => { console.log('create table ok') },
-      (tx, err) => { console.log('create table error', err) },
-    )
-
-    // truncate database
-    const dropTableQuery = `delete from ${tableName};`
-    const dropTableOptions =[]
-    tx.executeSql(
-      dropTableQuery,
-      dropTableOptions,
-      (tx, results) => { console.log('truncate table ok') },
-      (tx, err) => { console.log('truncate table error', err) },
-    )
-
-    // populate table
-    // initial values
-    let columnNamesString = ''
-    let valuesString = ''
-    const insertValues = []
-
-    for (let i = 0; i < len; i++) {
-      const lastOption = i === len-1
-      const key = Object.keys(selectedValues)[i]
-      const val = selectedValues[Object.keys(selectedValues)[i]].toString()
-
-      columnNamesString += !lastOption ? `${key}, ` : `${key}`
-      valuesString += !lastOption ? '?, ' : '?'
-      insertValues.push(val)
-    }
-
-    const insertQuery = `insert into ${tableName} (${columnNamesString}) values (${valuesString});`
+    const insertQuery = `insert or replace into ${tableName} (title_id, time) values (? , ?);`
 
     tx.executeSql(
       insertQuery,
@@ -109,34 +65,13 @@ const update = ( title_id, time) => {
       (tx, results) => { console.log('insert into ok') },
       (tx, err) => { console.log('insert into error', err) },
     )
-
-    const selectQuery = `select * from ${tableName}`
-    const selectOptions = []
-    tx.executeSql(
-      selectQuery,
-      selectOptions,
-      (tx, results) => {
-        const data = results.rows.item(0)
-        setOptions(parseObject(data))
-      },
-      (tx, error) => { console.log('select error', error) }
-    )
   },
   (error)=> console.log('transaction error', error),
   ()=> { console.log('transaction success') })
 }
 
-function parseObject (object){
-  const parsedObject = {}
-  for (const key in object) {
-    if (key == 'id') continue
-    parsedObject[key] = object[key].split(',')
-  }
-  return parsedObject
-}
-
 export {
   initDatabase,
-  getData,
+  getDataById,
   update,
 }

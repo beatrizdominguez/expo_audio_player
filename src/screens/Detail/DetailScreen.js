@@ -3,7 +3,7 @@ import { Text, View, Image, TouchableOpacity, ProgressBarAndroid } from 'react-n
 import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av'
 
-import { getData } from './../../database'
+import { getDataById, update } from './../../database'
 import { millisecondsToText } from './../../tools'
 
 import PageStyles from './styles'
@@ -25,7 +25,14 @@ const DetailScreen = ({ navigation, route }) => {
     let interval
 
     useEffect(() => {
-        const dbData = getData(audioBook.title_id)
+        const dbData = getDataById(audioBook.title_id)
+        if(dbData) {
+            const { time } = dbData
+            console.log(`sacamos la info y hacemos las cosas aqui`)
+            setPositionMillis(time)
+            console.log({ time })
+
+        }
 
         try {
 
@@ -63,6 +70,9 @@ const DetailScreen = ({ navigation, route }) => {
 
             return () => clearInterval(interval);
 
+        }else {
+            console.log(`esta pauado, guardo en bd para probar`)
+            update(audioBook.title_id, positionMillis)
         }
     }, [isPlaying, positionMillis, durationMillis])
 
@@ -97,6 +107,7 @@ const DetailScreen = ({ navigation, route }) => {
         console.log(`::::::`)
         // pause if needed
         // save current state in database
+        // update(audioBook.title_id, positionMillis )
     }
 
     const handlePlayPause = async (params) => {
