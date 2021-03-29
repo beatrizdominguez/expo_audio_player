@@ -40,7 +40,8 @@ const customStyles = StyleSheet.create({
     },
     buttonText: {
         color: Colors.white,
-        fontSize: 18,
+        fontSize: 50,
+        fontWeight: 'bold'
     },
 })
 
